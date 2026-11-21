@@ -1,0 +1,23 @@
+# CI only. Do not deploy publicly until App Service authentication is enabled.
+# First run `npm install` locally and commit package-lock.json for deterministic CI.
+trigger:
+  branches:
+    include: [main]
+pr:
+  branches:
+    include: [main]
+pool:
+  vmImage: ubuntu-latest
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '24.x'
+    displayName: Install Node 24
+  - script: npm ci
+    displayName: Install locked dependencies
+  - script: npm run check
+    displayName: Lint, types, and unit tests
+  - script: npm run build
+    displayName: Production build
+    env:
+      DEV_AUTH_BYPASS: 'false'

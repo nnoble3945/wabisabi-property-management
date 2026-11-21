@@ -1,0 +1,67 @@
+@import 'tailwindcss';
+:root { --navy:#101b2d; --ink:#1d2a3f; --muted:#728095; --line:#e4e9f0; --bg:#f6f8fb; --blue:#3566c2; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font-family:Arial, Helvetica, sans-serif; }
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+.app-shell { min-height:100vh; display:flex; }
+.sidebar { width:246px; background:var(--navy); color:#f7fafc; padding:28px 16px; display:flex; flex-direction:column; flex-shrink:0; }
+.brand { display:flex; gap:12px; align-items:center; padding:0 10px 42px; }
+.brand-symbol { width:38px; height:38px; border:1px solid #587098; border-radius:11px; display:grid; place-items:center; color:#fff; font-size:21px; font-weight:700; }
+.brand strong { font-size:19px; letter-spacing:.4px; display:block; }
+.brand span { display:block; color:#91a0b7; font-size:8px; letter-spacing:1.8px; margin-top:4px; }
+.sidebar-group { color:#8596b1; font-size:10px; font-weight:700; letter-spacing:1.6px; padding:0 14px 12px; }
+.sidebar nav { display:flex; flex-direction:column; gap:6px; }
+.sidebar-link { text-decoration:none; color:#9babbe; display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:9px; font-size:18px; }
+.sidebar-link span { font-size:13px; flex:1; }
+.sidebar-link small { float:right; font-size:10px; color:#70809c; }
+.sidebar-link.active { background:#223755; color:white; }
+.sidebar-link.disabled { opacity:.6; cursor:default; }
+.sidebar-footer { font-size:10px; letter-spacing:1.2px; line-height:1.8; color:#8092ac; margin-top:auto; padding:16px 12px; border-top:1px solid #29374b; }
+.sidebar-footer span { color:#aab8ca; font-size:11px; letter-spacing:0; }
+.content { padding:0 42px 20px; flex:1; min-width:0; }
+.topbar { height:65px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); font-size:12px; color:#8090a3; }
+.user-pill { font-size:10px; font-weight:700; background:#e9eef5; color:#67768b; border-radius:20px; padding:8px 12px; letter-spacing:.5px; }
+.page-heading { display:flex; justify-content:space-between; padding:34px 0 28px; }
+.eyebrow { font-size:10px; font-weight:700; letter-spacing:2px; color:#3975ce; }
+h1 { font-size:32px; letter-spacing:-1px; margin:8px 0; color:#1a2740; }
+p { color:var(--muted); margin:0; line-height:1.5; font-size:13px; }
+.stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-bottom:28px; }
+.stat { border:1px solid var(--line); background:#fff; padding:23px; border-radius:12px; min-height:148px; box-shadow:0 3px 12px #23355008; }
+.stat-label { display:block; color:#68788f; font-size:12px; font-weight:600; }
+.stat strong { display:block; font-size:38px; margin:9px 0; font-weight:700; letter-spacing:-1px; }
+.stat-foot { display:block; font-size:11px; color:#9aa6b7; }
+.panel { border:1px solid var(--line); background:#fff; border-radius:12px; padding:24px; box-shadow:0 3px 15px #23355006; }
+.panel-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+h2 { font-size:18px; margin:0 0 6px; }
+h3 { font-size:16px; margin:0; }
+.primary-button { border:0; background:#315bb3; border-radius:7px; color:#fff; padding:10px 15px; font-size:12px; font-weight:600; }
+.primary-button:hover { background:#264c97; }
+.primary-button:disabled { opacity:.65; cursor:wait; }
+.text-button { border:0; color:#315bb3; background:transparent; font-size:12px; }
+.property { display:flex; gap:15px; align-items:center; padding:17px 2px; border-bottom:1px solid var(--line); }
+.property:last-child { border:0; }
+.property-icon { height:42px; width:42px; flex-shrink:0; border-radius:10px; background:#edf2fb; color:#3868c1; font-size:23px; display:grid; place-items:center; }
+.property-details { flex:1; display:flex; flex-direction:column; gap:5px; min-width:0; }
+.property-details strong { font-size:13px; }
+.property-details span { font-size:12px; color:#8291a4; }
+.type-pill { border-radius:20px; padding:7px 10px; background:#eff3f7; color:#64758c; font-size:10px; white-space:nowrap; }
+.empty-state { text-align:center; padding:55px 10px; }
+.empty-icon { font-size:35px; color:#95a6bf; margin-bottom:10px; }
+.empty-state strong { font-size:13px; display:block; margin-bottom:7px; }
+.notice { padding:16px 20px; border:1px solid #b7ccec; background:#eef5ff; border-radius:10px; margin-bottom:22px; }
+.notice strong { color:#27508f; font-size:13px; }
+.notice p { margin-top:5px; }
+.notice.error { background:#fff4f3; border-color:#f1c3bd; }
+.new-property { width:min(590px,100%); padding:12px; background:#f8faff; border:1px solid var(--line); border-radius:8px; }
+.form-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; margin-bottom:15px; }
+.form-grid label { font-size:11px; font-weight:600; color:#596b80; display:flex; flex-direction:column; gap:5px; }
+.form-grid label.full-width { grid-column:span 2; }
+.form-grid input,.form-grid select { padding:10px; border:1px solid #d8e1ed; border-radius:6px; font-size:12px; color:#28374d; width:100%; background:#fff; }
+.error { color:#b73838; margin-bottom:10px; }
+.footer { padding:30px 0; text-align:center; color:#a3aebc; font-size:11px; }
+.center-panel { display:grid; min-height:100vh; place-items:center; padding:24px; }
+.center-panel .panel { max-width:530px; }
+@media(max-width:850px) { .app-shell { flex-direction:column; } .sidebar { width:100%; padding:12px 20px; } .brand { padding:0; } .sidebar-group,.sidebar nav,.sidebar-footer { display:none; } .content { padding:0 20px; } .stats { gap:8px; } .stat { padding:16px; min-height:120px; } .panel-heading { flex-direction:column; } }
+@media(max-width:550px) { .stats { grid-template-columns:1fr; } .page-heading { padding:26px 0; } h1 { font-size:27px; } .property { flex-wrap:wrap; } .type-pill { margin-left:57px; } .form-grid { grid-template-columns:1fr; } .form-grid label.full-width { grid-column:1; } }
