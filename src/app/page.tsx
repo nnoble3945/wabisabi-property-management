@@ -4,6 +4,7 @@ import { isAuthorized } from '@/lib/auth';
 import { databaseConfigured } from '@/lib/db';
 import { listProperties, type PropertyRecord } from '@/lib/properties';
 import { getPropertyTypeLabel } from '@/lib/labels.mjs';
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +29,9 @@ export default async function Dashboard() {
         <div className="brand"><div className="brand-symbol">N</div><div><strong>Wabi Sabi</strong><span>PROPERTY MANAGEMENT</span></div></div>
         <div className="sidebar-group">WORKSPACE</div>
         <nav aria-label="Primary navigation">
-          <a className="sidebar-link active" href="/">◫ <span>Portfolio overview</span></a>
+          <Link className="sidebar-link active" href="/">
+            ◫ <span>Portfolio Overview</span>
+          </Link>
           <a className="sidebar-link disabled" aria-disabled="true">⌂ <span>Maintenance <small>Next</small></span></a>
           <a className="sidebar-link disabled" aria-disabled="true">↗ <span>Financials <small>Planned</small></span></a>
           <a className="sidebar-link disabled" aria-disabled="true">▤ <span>Documents <small>Planned</small></span></a>
