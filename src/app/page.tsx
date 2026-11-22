@@ -25,7 +25,7 @@ export default async function Dashboard() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand"><div className="brand-symbol">N</div><div><strong>Noble</strong><span>PROPERTY MANAGEMENT</span></div></div>
+        <div className="brand"><div className="brand-symbol">N</div><div><strong>Wabi Sabi</strong><span>PROPERTY MANAGEMENT</span></div></div>
         <div className="sidebar-group">WORKSPACE</div>
         <nav aria-label="Primary navigation">
           <a className="sidebar-link active" href="/">◫ <span>Portfolio overview</span></a>
@@ -36,7 +36,7 @@ export default async function Dashboard() {
         <div className="sidebar-footer">PRIVATE PORTFOLIO<br/><span>Release 0.1 · Foundation</span></div>
       </aside>
       <main className="content">
-        <div className="topbar"><span>Noble / Portfolio</span><span className="user-pill">PRIVATE ACCOUNT</span></div>
+        <div className="topbar"><span>Wabi Sabi / Portfolio</span><span className="user-pill">PRIVATE ACCOUNT</span></div>
         <header className="page-heading"><div><div className="eyebrow">PORTFOLIO OPERATIONS</div><h1>Your properties</h1><p>One place to track the homes, rentals, and the work that keeps them running.</p></div></header>
         <section className="stats" aria-label="Portfolio summary">
           <div className="stat"><span className="stat-label">Properties</span><strong>{properties.length}</strong><span className="stat-foot">in your portfolio</span></div>
@@ -51,7 +51,7 @@ export default async function Dashboard() {
             {properties.length === 0 && <div className="empty-state"><div className="empty-icon">⌂</div><strong>No properties added yet</strong><p>{configured && !dbError ? 'Create your first property to start building your portfolio.' : 'Configure Azure SQL to begin storing property records.'}</p></div>}
           </div>
         </section>
-        <footer className="footer">Noble Property Management · Secure personal portfolio workspace</footer>
+        <footer className="footer">Wabi Sabi Property Management · Secure personal portfolio workspace</footer>
       </main>
     </div>
   );
