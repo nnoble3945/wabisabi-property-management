@@ -1,23 +1,89 @@
-# CI only. Do not deploy publicly until App Service authentication is enabled.
-# First run `npm install` locally and commit package-lock.json for deterministic CI.
+# CI runs on main and pull requests. Deploy to App Service only from a
+# manually queued run on main with deployToAzure=true.
 trigger:
   branches:
-    include: [main]
+    include:
+      - main
+
 pr:
   branches:
-    include: [main]
+    include:
+      - main
+
+parameters:
+  - name: deployToAzure
+    displayName: Deploy to WabiSabi development App Service
+    type: boolean
+    default: false
+
 pool:
   vmImage: ubuntu-latest
-steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '24.x'
-    displayName: Install Node 24
-  - script: npm ci
-    displayName: Install locked dependencies
-  - script: npm run check
-    displayName: Lint, types, and unit tests
-  - script: npm run build
-    displayName: Production build
-    env:
-      DEV_AUTH_BYPASS: 'false'
+
+stages:
+  - stage: BuildAndTest
+    displayName: Build, test, and package
+    jobs:
+      - job: Verify
+        displayName: Validate WabiSabi
+        steps:
+          - task: NodeTool@0
+            displayName: Install Node 24
+            inputs:
+              versionSpec: '24.x'
+
+          - script: npm ci
+            displayName: Install locked dependencies
+
+          - script: npm run check
+            displayName: Lint, types, and unit tests
+
+          - script: npm run build
+            displayName: Build production app
+            env:
+              DEV_AUTH_BYPASS: 'false'
+
+          - script: |
+              set -euo pipefail
+              test -f .next/standalone/server.js
+              mkdir -p .next/standalone/.next
+              cp -R .next/static .next/standalone/.next/static
+              if [ -d public ]; then
+                cp -R public .next/standalone/public
+              fi
+            displayName: Prepare Next.js standalone assets
+
+          - task: ArchiveFiles@2
+            displayName: Package web app
+            inputs:
+              rootFolderOrFile: '$(Build.SourcesDirectory)/.next/standalone'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: '$(Build.ArtifactStagingDirectory)/wabisabi-app.zip'
+              replaceExistingArchive: true
+
+          - publish: '$(Build.ArtifactStagingDirectory)/wabisabi-app.zip'
+            artifact: webapp
+            displayName: Publish deployable artifact
+
+  - ${{ if eq(parameters.deployToAzure, true) }}:
+      - stage: DeployDev
+        displayName: Deploy to development
+        dependsOn: BuildAndTest
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'))
+        jobs:
+          - job: DeployWeb
+            displayName: Deploy WabiSabi to Azure App Service
+            steps:
+              - download: current
+                artifact: webapp
+                displayName: Download packaged app
+
+              - task: AzureWebApp@1
+                displayName: Deploy WabiSabi development app
+                inputs:
+                  azureSubscription: 'sc-wabisabi-pm-dev'
+                  appType: webAppLinux
+                  appName: 'app-wabisabi-pm-dev'
+                  package: '$(Pipeline.Workspace)/webapp/wabisabi-app.zip'
+                  runtimeStack: 'NODE|24-lts'
+                  startUpCommand: 'HOSTNAME=0.0.0.0 node server.js'
