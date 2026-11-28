@@ -3,10 +3,10 @@ import test from 'node:test';
 import { createPropertySchema } from '../src/lib/schemas.ts';
 
 const valid = {
-  name: 'Welches Cabin',
+  name: 'Test Cabin',
   type: 'SHORT_TERM_RENTAL',
-  addressLine1: '24727 E McKenzie Valley Ct',
-  city: 'Welches',
+  addressLine1: '123 Example Road',
+  city: 'Exampletown',
   state: 'OR',
   postalCode: '97067',
 };
