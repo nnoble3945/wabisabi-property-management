@@ -26,7 +26,7 @@ export default async function Dashboard() {
 
   return (
     <div className="app-shell">
-      <Sidebar />aside>
+      <Sidebar />
       <main className="content">
         <div className="topbar"><span>Wabi Sabi / Portfolio</span><span className="user-pill">PRIVATE ACCOUNT</span></div>
         <header className="page-heading"><div><div className="eyebrow">PORTFOLIO OPERATIONS</div><h1>Your properties</h1><p>One place to track the homes, rentals, and the work that keeps them running.</p></div></header>
