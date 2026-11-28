@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isAuthorized } from '@/lib/auth';
+import { isTransientSqlError } from '@/lib/sql-resilience.mjs';
 import { databaseConfigured } from '@/lib/db';
 import { createProperty, listProperties } from '@/lib/properties';
 import { createPropertySchema } from '@/lib/schemas';
@@ -13,6 +14,9 @@ export async function GET() {
     return NextResponse.json({ properties: await listProperties() });
   } catch (error) {
     console.error('Property query failed', error);
+    if (isTransientSqlError(error)) {
+      return NextResponse.json({ error: 'Database temporarily unavailable. Please retry shortly.' }, { status: 503, headers: { 'Retry-After': '10' } });
+    }
     return NextResponse.json({ error: 'Unable to load properties' }, { status: 500 });
   }
 }
@@ -33,6 +37,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ property }, { status: 201 });
   } catch (error) {
     console.error('Property insert failed', error);
+    if (isTransientSqlError(error)) {
+      return NextResponse.json({ error: 'Database temporarily unavailable. Please retry shortly.' }, { status: 503, headers: { 'Retry-After': '10' } });
+    }
     return NextResponse.json({ error: 'Unable to create property' }, { status: 500 });
   }
 }
