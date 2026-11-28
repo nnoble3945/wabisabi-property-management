@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { z } from 'zod';
 import Sidebar from '@/components/Sidebar';
 import RetryDatabaseButton from '@/components/RetryDatabaseButton';
 import { isTransientSqlError } from '@/lib/sql-resilience.mjs';
@@ -8,6 +7,7 @@ import CreatePropertyForm from '@/components/CreatePropertyForm';
 import { isAuthorized } from '@/lib/auth';
 import { databaseConfigured } from '@/lib/db';
 import { getProperty } from '@/lib/properties';
+import { propertyIdSchema } from '@/lib/schemas';
 import { getPropertyTypeLabel, money } from '@/lib/labels.mjs';
 
 export const dynamic = 'force-dynamic';
@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 export default async function PropertyDetails({ params }: { params: Promise<{ id: string }> }) {
   if (!(await isAuthorized())) redirect('/unauthorized');
   const { id } = await params;
-  if (!z.uuid().safeParse(id).success) notFound();
+  if (!propertyIdSchema.safeParse(id).success) notFound();
 
   if (!databaseConfigured()) {
     return <main className="center-panel"><div className="notice error">Azure SQL is not configured.</div></main>;
