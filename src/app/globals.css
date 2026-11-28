@@ -65,3 +65,15 @@ h3 { font-size:16px; margin:0; }
 .center-panel .panel { max-width:530px; }
 @media(max-width:850px) { .app-shell { flex-direction:column; } .sidebar { width:100%; padding:12px 20px; } .brand { padding:0; } .sidebar-group,.sidebar nav,.sidebar-footer { display:none; } .content { padding:0 20px; } .stats { gap:8px; } .stat { padding:16px; min-height:120px; } .panel-heading { flex-direction:column; } }
 @media(max-width:550px) { .stats { grid-template-columns:1fr; } .page-heading { padding:26px 0; } h1 { font-size:27px; } .property { flex-wrap:wrap; } .type-pill { margin-left:57px; } .form-grid { grid-template-columns:1fr; } .form-grid label.full-width { grid-column:1; } }
+
+/* F02.1: property profiles */
+.property-name-link { color:#1d2a3f; font-size:13px; font-weight:700; text-decoration:none; }
+.property-name-link:hover, .property-back-link:hover { text-decoration:underline; color:#315bb3; }
+.property-name-link:focus-visible, .property-back-link:focus-visible { outline:2px solid #315bb3; outline-offset:3px; }
+.property-back-link { color:#64758c; font-size:12px; text-decoration:none; }
+.profile-layout { display:grid; grid-template-columns:minmax(0,1fr); gap:18px; max-width:960px; }
+.profile-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 28px; margin:20px 0 0; }
+.profile-grid dt { font-size:11px; font-weight:700; color:#75859a; margin-bottom:6px; }
+.profile-grid dd { font-size:14px; margin:0; overflow-wrap:anywhere; }
+.profile-edit-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:22px; flex-wrap:wrap; }
+@media(max-width:550px) { .profile-grid { grid-template-columns:1fr; gap:15px; } .profile-edit-heading .new-property { width:100%; } }
