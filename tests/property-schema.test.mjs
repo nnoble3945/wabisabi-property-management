@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createPropertySchema } from '../src/lib/schemas.ts';
+import { createPropertySchema, propertyIdSchema } from '../src/lib/schemas.ts';
 
 const valid = {
   name: 'Test Cabin',
@@ -49,4 +49,27 @@ test('rejects malformed dates, negative prices, and invalid property categories'
 test('rejects unknown fields and missing required address details', () => {
   assert.equal(createPropertySchema.safeParse({ ...valid, IsActive: false }).success, false);
   assert.equal(createPropertySchema.safeParse({ ...valid, addressLine1: '' }).success, false);
+});
+
+
+test('accepts SQL Server NEWSEQUENTIALID GUIDs as property IDs', () => {
+  // SQL Server GUIDs are not guaranteed to satisfy the RFC UUID version-nibble constraint.
+  for (const id of [
+    '01234567-89ab-f123-9abc-0123456789ab',
+    '01234567-89AB-F123-9ABC-0123456789AB',
+    '550e8400-e29b-41d4-a716-446655440000',
+  ]) {
+    assert.equal(propertyIdSchema.safeParse(id).success, true, id);
+  }
+});
+
+test('rejects malformed property IDs', () => {
+  for (const id of [
+    'not-a-guid',
+    '01234567-89ab-f123-9abc',
+    '01234567-89ab-f123-9abc-0123456789ab-extra',
+    '',
+  ]) {
+    assert.equal(propertyIdSchema.safeParse(id).success, false, id);
+  }
 });
