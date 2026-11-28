@@ -38,7 +38,7 @@ export default async function Dashboard() {
           <div className="stat"><span className="stat-label">Cash flow</span><strong>—</strong><span className="stat-foot">financial module planned</span></div>
         </section>
         {!configured && <div className="notice"><strong>Azure SQL setup required</strong><p>The interface is working, but the database is not connected. Set AZURE_SQL_SERVER and AZURE_SQL_DATABASE after provisioning Azure SQL, then run sql/001_init.sql.</p></div>}
-        {dbError === 'transient' && <div className="notice" role="status"><strong>Database temporarily unavailable</strong><p>Azure SQL may be resuming after inactivity. We retried the connection automatically, but it is not ready yet. Please try again shortly.</p><RetryDatabaseButton /></div>}
+        {dbError === 'transient' && <div className="notice" role="status"><strong>Database temporarily unavailable</strong><p>Azure SQL may be resuming after inactivity. Temporary connection failures are retried automatically. Please try again shortly.</p><RetryDatabaseButton /></div>}
         {dbError === 'permanent' && <div className="notice error" role="alert"><strong>Database connection or schema error</strong><p>Check Azure credentials, firewall/network access, database user permissions, and whether sql/001_init.sql has run. Server logs contain the technical detail.</p></div>}
         <section className="panel property-panel"><div className="panel-heading"><div><h2>Property portfolio</h2><p>Manage your primary home, long-term rental, and cabin.</p></div>{configured && !dbError && <CreatePropertyForm />}</div>
           <div className="property-list">
