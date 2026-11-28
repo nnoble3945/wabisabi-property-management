@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+/* SQL Server uniqueidentifier/NEWSEQUENTIALID values are GUID-shaped, but may not have an RFC UUID version nibble. */
+export const propertyIdSchema = z.guid();
+
 export const propertyType = z.enum(['PRIMARY', 'LONG_TERM_RENTAL', 'SHORT_TERM_RENTAL']);
 
 export const createPropertySchema = z.object({
