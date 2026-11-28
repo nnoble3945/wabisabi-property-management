@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { isAuthorized } from '@/lib/auth';
 import { isTransientSqlError } from '@/lib/sql-resilience.mjs';
 import { databaseConfigured } from '@/lib/db';
 import { getProperty, updateProperty } from '@/lib/properties';
-import { createPropertySchema } from '@/lib/schemas';
+import { createPropertySchema, propertyIdSchema } from '@/lib/schemas';
 
 export const runtime = 'nodejs';
 type Context = { params: Promise<{ id: string }> };
@@ -12,7 +11,7 @@ type Context = { params: Promise<{ id: string }> };
 export async function GET(_request: Request, context: Context) {
   if (!(await isAuthorized())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await context.params;
-  if (!z.uuid().safeParse(id).success) {
+  if (!propertyIdSchema.safeParse(id).success) {
     return NextResponse.json({ error: 'Invalid property ID' }, { status: 400 });
   }
   if (!databaseConfigured()) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
@@ -32,7 +31,7 @@ export async function GET(_request: Request, context: Context) {
 export async function PATCH(request: Request, context: Context) {
   if (!(await isAuthorized())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await context.params;
-  if (!z.uuid().safeParse(id).success) {
+  if (!propertyIdSchema.safeParse(id).success) {
     return NextResponse.json({ error: 'Invalid property ID' }, { status: 400 });
   }
   if (!databaseConfigured()) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
