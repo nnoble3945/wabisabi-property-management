@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 import Sidebar from '@/components/Sidebar';
+import RetryDatabaseButton from '@/components/RetryDatabaseButton';
+import { isTransientSqlError } from '@/lib/sql-resilience.mjs';
 import CreatePropertyForm from '@/components/CreatePropertyForm';
 import { isAuthorized } from '@/lib/auth';
 import { databaseConfigured } from '@/lib/db';
@@ -23,7 +25,10 @@ export default async function PropertyDetails({ params }: { params: Promise<{ id
     property = await getProperty(id);
   } catch (error) {
     console.error('Property detail error', error);
-    return <main className="center-panel"><div className="notice error">Unable to load this property. Check Azure SQL connectivity.</div></main>;
+    if (isTransientSqlError(error)) {
+      return <main className="center-panel"><div className="notice" role="status"><strong>Database temporarily unavailable</strong><p>Azure SQL may be resuming after inactivity. Please try again shortly.</p><RetryDatabaseButton /></div></main>;
+    }
+    return <main className="center-panel"><div className="notice error" role="alert">Unable to load this property. Check Azure SQL connectivity and server logs.</div></main>;
   }
   if (!property) notFound();
 
