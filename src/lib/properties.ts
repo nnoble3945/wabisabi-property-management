@@ -56,18 +56,16 @@ export async function createProperty(data: CreatePropertyInput): Promise<Propert
   const pool = await getPool();
   const result = await addPropertyInputs(pool.request(), data)
     .query<PropertyRecord>(`
+      DECLARE @Created TABLE (PropertyId uniqueidentifier);
       INSERT INTO dbo.Property (
         Name, PropertyType, AddressLine1, City, [State], PostalCode, AcquisitionDate, PurchasePrice
       )
+      OUTPUT INSERTED.PropertyId INTO @Created
       VALUES (
         @Name, @PropertyType, @AddressLine1, @City, @State, @PostalCode, @AcquisitionDate, @PurchasePrice
       );
       SELECT ${propertyColumns} FROM dbo.Property
-      WHERE PropertyId = (
-        SELECT TOP 1 PropertyId FROM dbo.Property
-        WHERE Name = @Name AND AddressLine1 = @AddressLine1
-        ORDER BY CreatedAt DESC, PropertyId DESC
-      );
+      WHERE PropertyId IN (SELECT PropertyId FROM @Created);
     `);
   return result.recordset[0];
 }
