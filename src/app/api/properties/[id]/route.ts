@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { isAuthorized } from '@/lib/auth';
+import { isTransientSqlError } from '@/lib/sql-resilience.mjs';
 import { databaseConfigured } from '@/lib/db';
 import { getProperty, updateProperty } from '@/lib/properties';
 import { createPropertySchema } from '@/lib/schemas';
@@ -21,6 +22,9 @@ export async function GET(_request: Request, context: Context) {
     return NextResponse.json({ property });
   } catch (error) {
     console.error('Property detail query failed', error);
+    if (isTransientSqlError(error)) {
+      return NextResponse.json({ error: 'Database temporarily unavailable. Please retry shortly.' }, { status: 503, headers: { 'Retry-After': '10' } });
+    }
     return NextResponse.json({ error: 'Unable to load property' }, { status: 500 });
   }
 }
@@ -46,6 +50,9 @@ export async function PATCH(request: Request, context: Context) {
     return NextResponse.json({ property });
   } catch (error) {
     console.error('Property update failed', error);
+    if (isTransientSqlError(error)) {
+      return NextResponse.json({ error: 'Database temporarily unavailable. Please retry shortly.' }, { status: 503, headers: { 'Retry-After': '10' } });
+    }
     return NextResponse.json({ error: 'Unable to update property' }, { status: 500 });
   }
 }
