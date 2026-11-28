@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server';
+import { isAuthorized } from '@/lib/auth';
 import { databaseConfigured } from '@/lib/db';
 
 export async function GET() {
-  return NextResponse.json({ service: 'noble-property-management', status: 'ok', databaseConfigured: databaseConfigured() });
+  if (!(await isAuthorized())) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  return NextResponse.json({
+    service: 'wabisabi-property-management',
+    status: 'ok',
+    databaseConfigured: databaseConfigured(),
+  });
 }

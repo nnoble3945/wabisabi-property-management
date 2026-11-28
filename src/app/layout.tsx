@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Noble Property Management',
-  description: 'Private portfolio operations for the Noble family properties',
+  title: 'WabiSabi Property Management',
+  description: 'Private property portfolio management',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
