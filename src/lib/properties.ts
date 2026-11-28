@@ -1,5 +1,5 @@
 import 'server-only';
-import sql from 'mssql';
+import sql, { type Request } from 'mssql';
 import { getPool } from '@/lib/db';
 import type { CreatePropertyInput } from '@/lib/schemas';
 
@@ -20,7 +20,7 @@ const propertyColumns = `
   CONVERT(varchar(10), AcquisitionDate, 23) AS AcquisitionDate, PurchasePrice
 `;
 
-function addPropertyInputs(request: sql.Request, data: CreatePropertyInput) {
+function addPropertyInputs(request: Request, data: CreatePropertyInput) {
   return request
     .input('Name', sql.NVarChar(120), data.name)
     .input('PropertyType', sql.VarChar(30), data.type)
