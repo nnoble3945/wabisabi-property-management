@@ -1,6 +1,7 @@
 import 'server-only';
 import sql, { type ConnectionPool, type config as SqlConfig } from 'mssql';
 import { DefaultAzureCredential } from '@azure/identity';
+import { retryTransientSqlConnection } from '@/lib/sql-resilience.mjs';
 
 let cachedPool: Promise<ConnectionPool> | undefined;
 let cachedUntil = 0;
@@ -20,7 +21,7 @@ async function openPool(): Promise<ConnectionPool> {
     port: 1433,
     options: { encrypt: true, trustServerCertificate: false },
     pool: { max: 4, min: 0, idleTimeoutMillis: 30000 },
-    connectionTimeout: 15000,
+    connectionTimeout: 30000,
   };
 
   if (process.env.SQL_USER && process.env.SQL_PASSWORD) {
@@ -38,7 +39,13 @@ async function openPool(): Promise<ConnectionPool> {
     };
   }
 
-  return new sql.ConnectionPool(config).connect();
+  const pool = new sql.ConnectionPool(config);
+  try {
+    return await pool.connect();
+  } catch (error) {
+    await pool.close().catch(() => {});
+    throw error;
+  }
 }
 
 export async function getPool(): Promise<ConnectionPool> {
@@ -46,9 +53,21 @@ export async function getPool(): Promise<ConnectionPool> {
   // Access tokens expire. Recreate pools periodically instead of retaining stale credentials.
   if (!cachedPool || Date.now() > cachedUntil) {
     const oldPool = cachedPool;
-    cachedPool = openPool();
+    // Retry only pool creation. Replaying SQL statements could duplicate writes.
+    const pending = retryTransientSqlConnection(openPool, {
+      onRetry: (attempt, error) => {
+        const code = error && typeof error === 'object' && 'code' in error
+          ? String(error.code)
+          : 'unknown';
+        console.warn(`Azure SQL connection attempt ${attempt} failed temporarily (${code}); retrying`);
+      },
+    });
+    cachedPool = pending;
     cachedUntil = Date.now() + 40 * 60 * 1000;
-    cachedPool.catch(() => { cachedPool = undefined; cachedUntil = 0; });
+    void pending.catch(() => {
+      // Do not discard a newer cached connection due to an earlier rejection.
+      if (cachedPool === pending) { cachedPool = undefined; cachedUntil = 0; }
+    });
     if (oldPool) void oldPool.then((pool) => pool.close()).catch(() => {});
   }
   return cachedPool;
